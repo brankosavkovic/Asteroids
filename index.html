@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Asteroidi</title>
+</head>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" href="./style.css">
+
+<body>
+    <h1>Asteroids</h1>
+    <div class="container mt-2">
+        <form id="form">
+            <div class="row">
+                <div class="col">
+                    <label for="start_date" id="label1">Start date</label>
+                </div>
+                <div class="col">
+                    <input type="date" class="form-control" id="start_date" name="start_date">
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col">
+                    <label for="end_date" id="label2">End date</label>
+                </div>
+                <div class="col">
+                    <input type="date" class="form-control" id="end_date" name="end_date">
+                </div>
+
+            </div>
+        </form>
+
+        <button  class="btn btn-primary mt-4" name="prikazi_asteroide" id="prikazi_asteroide">Prikazi
+            Asteroide</button>
+
+    </div>
+
+    <div class="container mt-3 col-12">
+        <table id="table" class="table table-sm table-bordered text-center">
+            <thead>
+                <tr>
+                    <th id="datum" scope="col">Datum</th>
+                    <th id="ime" scope="col">Ime</th>
+                    <th id="brzina" scope="col">Brzina kretanja (km/h)</th>
+                    <th id="min_precnik" scope="col">Min. prečnik (m)</th>
+                    <th id="max_precnik" scope="col">Max. prečnik (m)</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                
+            </tbody>
+        </table>
+    </div>
+
+    <div id="div1" class="col-8">
+        <select id="select" onchange="getSelectValue();">
+            
+        </select>
+    </div>
+
+    <div id="div2" class="col-4">
+        <ul id="ulList" class="list-group">
+            
+        </ul>
+    </div>
+
+    <div style="float: right; clear:right; margin-right: 15px;">
+        <input type="button" class="btn btn-primary mt-4" name="broj_prolazaka" id="broj_prolazaka"
+               value="Broj prolazaka pored Zemlje" onclick="window.location = 'chart.html'"/>
+    </div>
+
+    <script src="./index.js">
+        
+    </script>
+
+</body>
+
+</html>
