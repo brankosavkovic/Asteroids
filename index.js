@@ -2,14 +2,39 @@
 document.querySelector('#prikazi_asteroide').addEventListener('click', handleSubmit);
 document.querySelector("#start_date").addEventListener('change', handleDateChange);
 document.querySelector('#end_date').addEventListener('change', handleDateChange);
+document.querySelector('#datum').addEventListener('click', () => sortTable('date'));
+document.querySelector('#ime').addEventListener('click', () => sortTable('name'));
+document.querySelector('#brzina').addEventListener('click', () => sortTable('speed'));
+document.querySelector('#min_precnik').addEventListener('click', () => sortTable('min_diameter'));
+document.querySelector('#max_precnik').addEventListener('click', () => sortTable('max_diameter'));
+
+
 const table = document.querySelector('#table');
+let current_sort;
+let coef = 1;
 const select = document.querySelector('#select');
 const broj_prolazaka = document.querySelector('#broj_prolazaka');
-
-const table_data = [];
+let selfLinks = [];
+let table_data = [];
 const dates = {
     start_date: '',
     end_date: ''
+}
+
+function sortTable(field) {
+    if (field === current_sort) coef = -coef;
+
+    table_data = table_data.sort((a, b) => {
+        if (a[field] === b[field]) return 0;
+        if (isNaN(a[field]) && isNaN(b[field])) {
+            return a[field] > b[field] ? coef : -1 * coef;
+        } else {
+            return Number(a[field]) > Number(b[field]) ? coef : -1 * coef;
+        }
+    });
+
+    current_sort = field;
+    createTable();
 }
 
 async function fetch_data() {
@@ -45,13 +70,15 @@ async function handleSubmit(e) {
     if (date_1 === '' || date_2 === '') {
         alert('Morate uneti oba datuma!')
     } else {
-        deleteTable();
         const data = await fetch_data();
-        const parsed = parseData(data);
+        table_data = parseData(data);
         table.style.visibility = "visible";
-        select.style.visibility = "visible";
-        createTable(parsed);
-        createSelect(parsed);
+        const select = document.getElementById('select');
+        if(select){
+            select.style.visibility = "visible";
+        }
+        createTable();
+        createSelect();
     }
 }
 
@@ -62,6 +89,13 @@ function deleteTable() {
 
     for (var x = rowCount - 1; x > 0; x--) {
         table.removeChild(tableRows[x]);
+    }
+}
+
+function deleteSelect() {
+    const select = document.getElementById('select');
+    if (select){
+        select.parentNode.removeChild(select);
     }
 }
 
@@ -82,28 +116,40 @@ function parseData(data) {
             speed: item.close_approach_data[0].relative_velocity.kilometers_per_hour,
             min_diameter: item.estimated_diameter.meters.estimated_diameter_min,
             max_diameter: item.estimated_diameter.meters.estimated_diameter_max,
+            self: item.links.self,
         }
     });
 }
 
-function createSelect(array) {
+function createSelect() {
+    deleteSelect();
 
+    const select = document.createElement('select');
+    select.setAttribute('id', 'select');
+    select.value = null;
+    select.addEventListener('change', getSelectValue);
+    const div1 = document.getElementById('div1');
+    const select_data = table_data.filter((item) => !selfLinks.includes(item.self))
     const empty_option = document.createElement('option');
+    empty_option.style.display = 'none';
     const empty_option_text = document.createTextNode('');
     empty_option.appendChild(empty_option_text);
     select.appendChild(empty_option);
 
-    array.forEach(item => {
+    select_data.forEach(item => {
         const option = document.createElement('option');
         const option_text = document.createTextNode(item.name);
         option.appendChild(option_text);
+        option.setAttribute('value', item.self);
         select.appendChild(option);
     });
-
+    select.style.visibility = 'visible';
+    div1.appendChild(select);
 }
 
-function createTable(array) {
-    array.forEach(item => {
+function createTable() {
+    deleteTable();
+    table_data.forEach(item => {
         const row = document.createElement('tr');
         const date_cell = document.createElement('td');
         const date_text = document.createTextNode(item.date);
@@ -133,11 +179,13 @@ function createTable(array) {
         table.appendChild(row);
     })
 }
-
+let selected_links = [];
 let i = 0;
 function getSelectValue() {
-    
-    let selectedValue = document.querySelector('#select').value;
+    const selectedOption = document.querySelector('#select > option:checked');
+    const selectedValue = selectedOption.innerText;
+    const selected_url = selectedOption.value;
+    selfLinks.push(selected_url);
     let ulList = document.querySelector('#ulList');
     const li = document.createElement('li');
     li.setAttribute('class', 'list-group-item');
@@ -149,16 +197,14 @@ function getSelectValue() {
     btn.setAttribute('style', 'height:30px; line-height:30px;')
     btn.innerText = 'Delete';
     li.appendChild(btn);
-   
+
     if (selectedValue != '') {
+
         ulList.appendChild(li);
         i++;
     }
-   
- 
 
-  
-
+    createSelect();
     if (i > 0) {
         broj_prolazaka.style.visibility = 'visible';
     } else {
@@ -167,6 +213,9 @@ function getSelectValue() {
 
     btn.onclick = function () {
         li.remove();
+        selfLinks = selfLinks.filter(link => link !== selected_url);
+        console.log(selfLinks)
+        createSelect();
         i--;
         if (i == 0)
             broj_prolazaka.style.visibility = 'hidden';
@@ -174,84 +223,7 @@ function getSelectValue() {
 }
 
 
-th = document.getElementsByTagName('th');
 
-//Sortiranje prve dve kolone kao sortiranje stringova
-
-for (let c = 0; c < 2; c++) {
-    th[c].addEventListener('click', sortColumn(c));
-}
-
-function sortColumn(c) {
-    return function () {
-        sortTable(c);
-        console.log(c);
-    }
-}
-
-function sortTable(c) {
-    var table, rows, switching, i, x, y, shouldSwitch;
-    table = document.getElementById('table');
-    switching = true;
-
-    while (switching) {
-        switching = false;
-        rows = table.rows;
-
-        for (i = 1; i < (rows.length - 1); i++) {
-            shouldSwitch = false;
-            x = rows[i].getElementsByTagName('td')[c];
-            y = rows[i + 1].getElementsByTagName('td')[c];
-
-            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                shouldSwitch = true;
-                break;
-            }
-        }
-        if (shouldSwitch) {
-            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-            switching = true;
-        }
-    }
-}
-
-//Sortiranje poslednje tri kolone
-
-for (let m = 2; m < th.length; m++) {
-    th[m].addEventListener('click', sort(m));
-}
-
-function sort(m) {
-    return function () {
-        sort_number(m);
-        console.log(m);
-    }
-}
-
-function sort_number(m) {
-    var table, rows, switching, i, x, y, shouldSwitch;
-    table = document.getElementById('table');
-    switching = true;
-
-    while (switching) {
-        switching = false;
-        rows = table.rows;
-
-        for (i = 1; i < (rows.length - 1); i++) {
-            x = rows[i].getElementsByTagName('td')[m];
-            y = rows[i + 1].getElementsByTagName('td')[m];
-
-            if (parseFloat(x.innerHTML) > parseFloat(y.innerHTML)) {
-                shouldSwitch = true;
-                break;
-            }
-        }
-        if (shouldSwitch) {
-            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-            switching = true;
-        }
-    }
-}
 
 
 
