@@ -48,14 +48,6 @@ async function fetch_data() {
     return response.near_earth_objects;
 }
 
-// async function fetch_self() {
-
-//     const respSelf = await fetch(`https://www.neowsapp.com/rest/v1/neo/2035107?api_key=x0HeIJzRCLm3lj0zrfXt2LltusKVCO7aoHmRkVq2`).then((resp) => resp.json())
-//     return respSelf;
-
-
-// }
-
 function handleDateChange(e) {
     const date = e.target.value;
     const name = e.target.name;
@@ -89,10 +81,6 @@ async function handleSubmit(e) {
         }
         createTable();
         createSelect();
-        // console.log(table_data.self);
-        // const res = await fetch_self();
-        // console.log(res);
-        // console.log(res.close_approach_data);
     }
 }
 
