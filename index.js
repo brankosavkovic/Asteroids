@@ -8,6 +8,8 @@ document.querySelector('#brzina').addEventListener('click', () => sortTable('spe
 document.querySelector('#min_precnik').addEventListener('click', () => sortTable('min_diameter'));
 document.querySelector('#max_precnik').addEventListener('click', () => sortTable('max_diameter'));
 
+document.querySelector('#broj_prolazaka').addEventListener('click', fetch_self);
+
 
 const table = document.querySelector('#table');
 let current_sort;
@@ -46,6 +48,14 @@ async function fetch_data() {
     return response.near_earth_objects;
 }
 
+// async function fetch_self() {
+
+//     const respSelf = await fetch(`https://www.neowsapp.com/rest/v1/neo/2035107?api_key=x0HeIJzRCLm3lj0zrfXt2LltusKVCO7aoHmRkVq2`).then((resp) => resp.json())
+//     return respSelf;
+
+
+// }
+
 function handleDateChange(e) {
     const date = e.target.value;
     const name = e.target.name;
@@ -74,11 +84,15 @@ async function handleSubmit(e) {
         table_data = parseData(data);
         table.style.visibility = "visible";
         const select = document.getElementById('select');
-        if(select){
+        if (select) {
             select.style.visibility = "visible";
         }
         createTable();
         createSelect();
+        // console.log(table_data.self);
+        // const res = await fetch_self();
+        // console.log(res);
+        // console.log(res.close_approach_data);
     }
 }
 
@@ -94,7 +108,7 @@ function deleteTable() {
 
 function deleteSelect() {
     const select = document.getElementById('select');
-    if (select){
+    if (select) {
         select.parentNode.removeChild(select);
     }
 }
@@ -116,7 +130,7 @@ function parseData(data) {
             speed: item.close_approach_data[0].relative_velocity.kilometers_per_hour,
             min_diameter: item.estimated_diameter.meters.estimated_diameter_min,
             max_diameter: item.estimated_diameter.meters.estimated_diameter_max,
-            self: item.links.self,
+            self: item.links.self
         }
     });
 }
@@ -179,13 +193,14 @@ function createTable() {
         table.appendChild(row);
     })
 }
-let selected_links = [];
 let i = 0;
+let links = [];
 function getSelectValue() {
     const selectedOption = document.querySelector('#select > option:checked');
     const selectedValue = selectedOption.innerText;
     const selected_url = selectedOption.value;
     selfLinks.push(selected_url);
+
     let ulList = document.querySelector('#ulList');
     const li = document.createElement('li');
     li.setAttribute('class', 'list-group-item');
@@ -199,7 +214,6 @@ function getSelectValue() {
     li.appendChild(btn);
 
     if (selectedValue != '') {
-
         ulList.appendChild(li);
         i++;
     }
@@ -214,19 +228,41 @@ function getSelectValue() {
     btn.onclick = function () {
         li.remove();
         selfLinks = selfLinks.filter(link => link !== selected_url);
-        console.log(selfLinks)
+
         createSelect();
         i--;
         if (i == 0)
             broj_prolazaka.style.visibility = 'hidden';
+        
     }
 }
 
+    let x = [];
+    let num = 0;
+    let names = [];
+    async function fetch_self() {
+        for (let j = 0; j < selfLinks.length; j++) {
+            let respSelf = await fetch(`${selfLinks[j]}`).then((resp) => resp.json());
+            links.push(respSelf);
+        }
 
+        for (let i = 0; i < links.length; i++) {
+            for (let k = 0; k < links[i].close_approach_data.length; k++) {
+                if (Date.parse(links[i].close_approach_data[k].close_approach_date) > Date.parse('1900-01-01')
+                    && Date.parse(links[i].close_approach_data[k].close_approach_date) < Date.parse('1999-12-31')) {
+                    num += 1;
+                }
+            }
+            x.push(num);
+            names.push(links[i].name);
+            num = 0;   
+        }
 
+        localStorage.setItem("vrednosti", JSON.stringify(x));
+        localStorage.setItem("imena", JSON.stringify(names));
 
-
-
+        window.document.location = 'chart.html';
+    }
 
 
 

@@ -6,59 +6,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-   <script src=" https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <style>
-    #nazad{
-        margin-left: 48%;
-    }
-    
+        body {
+            background-color: aqua;
+
+        }
+
+        #nazad {
+            margin-left: 48%;
+            margin-top: 40%;
+        }
     </style>
+
 </head>
 
 <body>
-    <canvas class="container" id="horizontalBar"></canvas>
+    <div class="container mt-3" id="chartContainer"></div>
 
-    <input type="button" class="btn btn-primary mt-4" name="nazad" id="nazad"
-    value="Nazad"  onclick="window.location = 'index.html'"/>
-
-
-  
-    <script>
-         new Chart(document.getElementById("horizontalBar"), {
-            "type": "horizontalBar",
-            "data": {
-                "labels": ["Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Grey"],
-                "datasets": [{
-                    "label": "EXAMPLE OF CHART",
-                    "data": [22, 33, 55, 12, 86, 23, 14],
-                    "fill": false,
-                    "backgroundColor": ["rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)",
-                        "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(54, 162, 235, 0.2)",
-                        "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"
-                    ],
-                    "borderColor": ["rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)",
-                        "rgb(75, 192, 192)", "rgb(54, 162, 235)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"
-                    ],
-                    "borderWidth": 1
-                }]
-            },
-            "options": {
-                "scales": {
-                    "xAxes": [{
-                        "ticks": {
-                            "beginAtZero": true
-                        }
-                    }]
-                }
-            }
-        });
-
-    </script>
-
-
-
+    <div><input type="button" class="btn btn-primary" name="nazad" id="nazad" value="Nazad"
+            onclick="window.location = 'index.html'" /></div>
 </body>
+<script type="text/javascript">
+
+    var x = JSON.parse(localStorage.getItem("vrednosti"));
+    var names = JSON.parse(localStorage.getItem("imena"));
+
+    var dps = [];
+    for (let i = 0; i < x.length; i++) {
+        dps[i] = { y: x[i], label: names[i], color: "green" };
+        if (dps[i].y > 25 && dps[i].y < 45) {
+            dps[i].color = "yellow";
+        }
+        else if (dps[i].y > 45 && dps[i].y < 75) {
+            dps[i].color = "orange";
+        }
+        else if (dps[i].y > 75) dps[i].color = "red    ";
+    }
+    var chart = new CanvasJS.Chart("chartContainer", {
+        
+        title: {
+            text: "Broj prolazaka pored Zemlje izmedju 1900. i 1999. godine   "
+        },
+        data: [{
+            type: "bar",
+            dataPoints: dps
+        }]
+    });
+
+    chart.render();
+</script>
 
 </html>

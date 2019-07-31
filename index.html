@@ -11,6 +11,8 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link rel="stylesheet" href="./style.css">
+<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
 
 <body>
     <h1>Asteroids</h1>
@@ -36,7 +38,7 @@
             </div>
         </form>
 
-        <button  class="btn btn-primary mt-4" name="prikazi_asteroide" id="prikazi_asteroide">Prikazi
+        <button class="btn btn-primary mt-4" name="prikazi_asteroide" id="prikazi_asteroide">Prikazi
             Asteroide</button>
 
     </div>
@@ -53,29 +55,32 @@
                 </tr>
             </thead>
             <tbody>
-                
-                
+
             </tbody>
         </table>
     </div>
 
     <div id="div1" class="col-8">
-        
+
     </div>
 
     <div id="div2" class="col-4">
         <ul id="ulList" class="list-group">
-            
+
         </ul>
     </div>
 
     <div style="float: right; clear:right; margin-right: 15px;">
-        <input type="button" class="btn btn-primary mt-4" name="broj_prolazaka" id="broj_prolazaka"
-               value="Broj prolazaka pored Zemlje" onclick="window.location = 'chart.html'"/>
+        <form action="chart.html">
+            <input type="button" class="btn btn-primary mt-4" name="broj_prolazaka" id="broj_prolazaka"
+                value="Broj prolazaka pored Zemlje">
+        </form>
     </div>
 
+    <div class="container" id="chartContainer"></div>
+
     <script src="./index.js">
-        
+
     </script>
 
 </body>
